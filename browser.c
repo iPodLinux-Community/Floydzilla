@@ -36,11 +36,13 @@
 #include "ipod.h"
 #include "mlist.h"
 #include "piezo.h"
+#include "textinput.h"
 
 static GR_TIMER_ID browser_key_timer;
 static GR_WINDOW_ID browser_wid;
 static GR_GC_ID browser_gc;
 static menu_st *browser_menu, *browser_menu_overlay;
+static char * browser_rename_oldname;
 
 #define FILE_TYPE_PROGRAM 0
 #define FILE_TYPE_DIRECTORY 1
@@ -85,7 +87,60 @@ extern void new_tzx_playback_window(char *filename);
 extern int is_text_type(char * extension);
 extern int is_ascii_file(char *filename);
 extern void new_stringview_window(char *buf, char *title);
+extern void new_podwrite_window_with_file(char * filename);
 void new_exec_window(char *filename);
+
+/*
+void new_iboy4g_window (void) {
+   if (access("/sbin/iboy-4g", X_OK) == 0) {
+      new_exec_window("/sbin/iboy-4g");
+   }
+}
+
+void new_iboyphoto_window (void) {
+   if (access("/sbin/iboy-photo", X_OK) == 0) {
+      new_exec_window("/sbin/iboy-photo");
+   }
+}
+
+void new_iboycolor_window (void) {
+   if (access("/sbin/iboy-color", X_OK) == 0) {
+      new_exec_window("/sbin/iboy-color");
+   }
+}
+
+void new_iboynano_window (void) {
+   if (access("/sbin/iboy-nano", X_OK) == 0) {
+      new_exec_window("/sbin/iboy-nano");
+   }
+}
+
+void new_iboy1mini_window (void) {
+   if (access("/sbin/iboy-1mini", X_OK) == 0) {
+      new_exec_window("/sbin/iboy-1mini");
+   }
+}
+
+void new_iboy2mini_window (void) {
+   if (access("/sbin/iboy-2mini", X_OK) == 0) {
+      new_exec_window("/sbin/iboy-2mini");
+   }
+}
+ 
+//need help trying to figure this out...
+
+void new_idoom_window (void) {
+   if (access("/hp/iDoom/iDoom", X_OK) == 0) {
+      new_exec_window("/hp/iDoom/iDoom");
+   }
+}
+*/
+
+void new_iboy_window (void) {
+   if (access("/sbin/iboy", X_OK) == 0) {
+      new_exec_window("/sbin/iboy");
+   }
+}
 
 static int dir_cmp(const void *x, const void *y) 
 {
@@ -368,6 +423,11 @@ static void browser_vip_open_file()
 	free(execline);
 }
 
+static void browser_podwrite_open_file()
+{
+	new_podwrite_window_with_file(current_file);
+}
+
 static void browser_pipe_exec()
 {
 	int len;
@@ -458,8 +518,9 @@ static void browser_delete_confirm()
 {
 	struct stat stat_result;
 	static item_st delete_confirm_menu[] = {
-		{N_("Whoops. No thanks."), NULL, SUB_MENU_PREV},
-		{N_("Yes, Delete it."), browser_delete_file, ACTION_MENU},
+		{N_("NO"), NULL, SUB_MENU_PREV},
+		{N_("-----"), NULL, NULL},
+		{N_("YES"), browser_delete_file, ACTION_MENU},
 		{0}
 	};
 
@@ -474,6 +535,23 @@ static void browser_delete_confirm()
 		pz_error(_("Warning: this will delete everything under %s"),
 				current_file);
 	}
+}
+
+static void browser_rename_callback()
+{
+	if (text_get_buffer()[0] != 0) {
+		if ( rename(browser_rename_oldname, text_get_buffer()) == -1 ) {
+			pz_perror(current_file);
+		} else {
+			browser_mscandir("./");
+		}
+	}
+}
+
+static void browser_rename()
+{
+	browser_rename_oldname = current_file;
+	new_text_box(10, 40, 0, 0, current_file, browser_rename_callback);
 }
 
 static void browser_action(unsigned short userChoice)
@@ -499,10 +577,15 @@ static void browser_action(unsigned short userChoice)
 			menu_add_item(browser_menu, _("Open with viP"),
 					browser_vip_open_file, 0, ACTION_MENU |
 					SUB_MENU_PREV);
+			menu_add_item(browser_menu, _("Open with PodWrite"),
+					browser_podwrite_open_file, 0, ACTION_MENU |
+					SUB_MENU_PREV);
 		break;
 	}
 	menu_add_item(browser_menu, _("Delete"),  browser_delete_confirm, 0,
 			ACTION_MENU | ARROW_MENU);
+	menu_add_item(browser_menu, _("Rename"),  browser_rename, 0,
+			ACTION_MENU);
 }
 
 static int browser_do_keystroke(GR_EVENT * event)

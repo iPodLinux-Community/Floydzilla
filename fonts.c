@@ -138,7 +138,7 @@ int populate_fontlist() {
 	return num_fonts;
 }
 
-static void destroy_font(int local)
+void destroy_font(int local)
 {
 	if (local && font_font) {
 		GrDestroyFont(font_font);
@@ -150,7 +150,7 @@ static void destroy_font(int local)
 	}
 }
 
-static void set_font(char *file, int size, GR_GC_ID gc, int local)
+void set_font(char *file, int size, GR_GC_ID gc, int local)
 {
 	GR_FONT_ID lfont;
 	lfont = GrCreateFont((GR_CHAR *)file, size, NULL);

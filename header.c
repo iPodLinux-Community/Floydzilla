@@ -80,7 +80,10 @@ static void draw_batt_status( int which )
 	static int battery_fill = 512;
 	static int battery_fill_16 = 0;
 	static int last_level = 0;
-	static int old_battery_is_charging = 0;	
+	static int old_battery_is_charging = 0;
+	int decorations = appearance_get_decorations();
+	int i;
+	
 
 	GR_POINT batt_outline[] = {
 		{screen_info.cols-22, 5},
@@ -138,10 +141,15 @@ static void draw_batt_status( int which )
 		snprintf( buf, 32, "%3d", battery_fill );
 		if( battery_is_charging ) strcat( buf, "C" );
 		
-		GrSetGCForeground(root_gc, appearance_get_color(CS_TITLEBG) );
-		GrFillRect(root_wid, root_gc,
-					screen_info.cols-DEC_WIDG_SZ, 0,
-					DEC_WIDG_SZ, HEADER_TOPLINE );
+		if ( decorations == DEC_GRADIENT ) {
+			for( i=0 ; i<(HEADER_TOPLINE) ; i++ ){
+				GrSetGCForeground(root_gc, appearance_get_gradient(i)); 
+				GrLine( root_wid, root_gc, screen_info.cols-DEC_WIDG_SZ, i, screen_info.cols, i );
+			}	
+		} else {
+			GrSetGCForeground(root_gc, appearance_get_color(CS_TITLEBG) );
+			GrFillRect(root_wid, root_gc, screen_info.cols-DEC_WIDG_SZ, 0, DEC_WIDG_SZ, HEADER_TOPLINE );
+		} 
 
 		GrSetGCForeground(root_gc, appearance_get_color(CS_TITLEFG) );
 
@@ -216,10 +224,21 @@ static void draw_batt_status( int which )
 	    if( which < 1 ) {
 		    /* erase charging bolt overlap */
 
-		    GrSetGCForeground(root_gc, appearance_get_color(CS_TITLEBG));
-		    GrFillRect(root_wid, root_gc, screen_info.cols-16,2, 9,3);
-		    GrFillRect(root_wid, root_gc, screen_info.cols-18,16, 6,3);
-		    return;
+		    if ( decorations == DEC_GRADIENT ) {
+			for ( i=2 ; i<5 ; i++ ) {
+				GrSetGCForeground(root_gc, appearance_get_gradient(i)); 
+				GrLine( root_wid, root_gc, screen_info.cols-16, i, screen_info.cols, i );
+			}
+			for ( i=16 ; i<19 ; i++ ) {
+				GrSetGCForeground(root_gc, appearance_get_gradient(i)); 
+				GrLine( root_wid, root_gc, screen_info.cols-18, i, screen_info.cols, i );
+			}
+		} else {
+			GrSetGCForeground(root_gc, appearance_get_color(CS_TITLEBG));
+			GrFillRect(root_wid, root_gc, screen_info.cols-16,2, 9,3);
+			GrFillRect(root_wid, root_gc, screen_info.cols-18,16, 6,3);
+		}
+		return;
 	    }
 
 	    /* draw charging bolt */
@@ -265,15 +284,26 @@ static double get_load_average( void )
 
 static void draw_load_average( void )
 {
+
+
 	double avg;
 	int level = 0;
+	int decorations = appearance_get_decorations();
+	int i;
 
 	if( !ipod_get_setting( DISPLAY_LOAD )) return;
 	if( hold_is_on ) return;
 
 	/* clear the background */
-	GrSetGCForeground(root_gc, appearance_get_color(CS_TITLEBG) );
-	GrFillRect( root_wid, root_gc, 0, 0, DEC_WIDG_SZ, HEADER_TOPLINE );
+	if ( decorations == DEC_GRADIENT ) {
+		for( i=0 ; i<(HEADER_TOPLINE) ; i++ ){
+			GrSetGCForeground(root_gc, appearance_get_gradient(i)); 
+			GrLine( root_wid, root_gc, 0, i, DEC_WIDG_SZ, i );
+		}	
+	} else {
+		GrSetGCForeground(root_gc, appearance_get_color(CS_TITLEBG) );
+		GrFillRect( root_wid, root_gc, 0, 0, DEC_WIDG_SZ, HEADER_TOPLINE );
+	}
 
 	/* get the load average */
 	avg = get_load_average();
@@ -297,16 +327,25 @@ static void draw_load_average( void )
 void draw_hold_status( void )
 {
 	int decorations = appearance_get_decorations();
+	int i;
 
 	if (hold_is_on) {
 		if(    decorations == DEC_AMIGA13
 		    || decorations == DEC_AMIGA11
+		    || decorations == DEC_GRADIENT	
 		    || ipod_get_setting( DISPLAY_LOAD ) ){
 			/* erase any decoration-specific imagery */
 			GrSetGCForeground(root_gc,
 					appearance_get_color(CS_TITLEBG));
 			GrFillRect( root_wid, root_gc, 0, 0,
 					DEC_WIDG_SZ, HEADER_TOPLINE );
+
+			if( decorations == DEC_GRADIENT) {
+				for( i=0 ; i<(HEADER_TOPLINE) ; i++ ){
+					GrSetGCForeground(root_gc, appearance_get_gradient(i)); 
+					GrLine( root_wid, root_gc, 0, i, DEC_WIDG_SZ, i );
+				}	
+			}
 		    
 		}
 
@@ -330,6 +369,13 @@ void draw_hold_status( void )
 		if( ipod_get_setting( DISPLAY_LOAD )) {
 			draw_load_average();
 			return;
+		}
+
+		if( decorations == DEC_GRADIENT) {
+			for( i=0 ; i<(HEADER_TOPLINE) ; i++ ){
+				GrSetGCForeground(root_gc, appearance_get_gradient(i)); 
+				GrLine( root_wid, root_gc, 0, i, DEC_WIDG_SZ, i );
+			}	
 		}
 
 		if( decorations == DEC_AMIGA13 || decorations == DEC_AMIGA11 ){
@@ -397,6 +443,12 @@ void pz_draw_header(char *header)
 						0, 2, HEADER_TOPLINE );
 		centered_text = 0;
 	}
+	if( decorations == DEC_GRADIENT ) {
+		for( i=0 ; i<(HEADER_TOPLINE) ; i++ ){
+			GrSetGCForeground(root_gc, appearance_get_gradient(i)); 
+			GrLine( root_wid, root_gc, 0, i, screen_info.cols, i );
+		}	
+	}
 	if( decorations == DEC_MROBE ) {
 		/* to make this symmetrical, we draw the left half, left to 
 		    right, then we draw the right half, right to left.
@@ -440,10 +492,12 @@ void pz_draw_header(char *header)
 		if( decorations != DEC_PLAIN ) {
 			GrSetGCForeground(root_gc, 
 				appearance_get_color(CS_TITLEBG) );
-			GrFillRect( root_wid, root_gc, 
-			(centered_text) ? ((screen_info.cols - width)>>1) - 4
-					: DEC_WIDG_SZ+2,
-				0, width + 8, HEADER_TOPLINE );
+			if ( decorations != DEC_GRADIENT ) {
+				GrFillRect( root_wid, root_gc, 
+				(centered_text) ? ((screen_info.cols - width)>>1) - 4
+						: DEC_WIDG_SZ+2,
+					0, width + 8, HEADER_TOPLINE );
+			}
 		}
 
 		GrSetGCForeground(root_gc, appearance_get_color(CS_TITLEFG) );

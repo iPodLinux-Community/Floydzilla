@@ -67,8 +67,10 @@
 #define DECORATIONS	(45)	/* appearance */
 #define BATTERY_DIGITS	(46)	/* appearance */
 #define DISPLAY_LOAD	(47)	/* appearance */
-#define FONT_FILE	(48)
+#define FONT_FILE		(48)
 #define SLIDE_TRANSIT	(49)
+#define TEXT_INPUT 50
+#define GRADIENTS		(51)
 
 #define MIN_CONTRAST	0
 #define MAX_CONTRAST	128

@@ -120,7 +120,9 @@ GR_COLOR appearance_get_color( int index );
 
 
 /* Decorations stuff */
-#define NDECORATIONS	(4)	/* total number of decorations */
+#define NDECORATIONS	(5)	/* total number of decorations */
+#define NDEC_MONO_LAST	(4)	/* last index of mono decorations */
+
 extern char * appearance_decorations[];
 
 void appearance_set_decorations( int index );
@@ -131,5 +133,14 @@ int appearance_get_decorations( void );
 #define DEC_PLAIN	(0)
 #define DEC_AMIGA11	(1)
 #define DEC_AMIGA13	(2)
-#define DEC_MROBE	(3)
+#define DEC_MROBE		(3)
+#define DEC_GRADIENT	(4)
 
+/* Gradient stuuf */
+extern char * appearance_gradient_names[];
+
+void appearance_set_gradient_type( int index );
+int appearance_get_gradient_type( void );
+GR_COLOR appearance_get_gradient ( int index );
+
+#define NGRADIENTS	(4)	/* total number of gradients */

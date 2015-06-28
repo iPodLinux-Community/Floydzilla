@@ -225,6 +225,8 @@ static GR_COLOR colorscheme_mrobe[] = {
 
 
 int colorscheme_max = CS_NSCHEMES;
+int decorations_max = NDECORATIONS;
+int gradients_max = NGRADIENTS;
 
 static GR_COLOR * schemes[] = {
 	colorscheme_mono,
@@ -284,14 +286,14 @@ GR_COLOR appearance_get_color( int index )
 
 char * appearance_decorations[] = { "Plain",
 		"Amiga 1.1", "Amiga 1.3",
-		"m:robe" };
+		"m:robe", "Gradient" };
 
 static int decoration_current_idx = 0;
 
 void appearance_set_decorations( int index )
 {
 	if( index < 0 ) index = 0;
-	if( index >= NDECORATIONS ) index = 0;
+	if( index >= decorations_max ) index = 0;
 	decoration_current_idx = index;
 }
 
@@ -301,6 +303,113 @@ int appearance_get_decorations( void )
 }
 
 /* rendering code is over in pz.c for now. */
+
+
+/******************************************************************************
+** Gradient stuff
+*/
+
+int col;
+int col_diff;
+int col_incr;
+
+static int grad_plain[] = {
+	255,	255,	255,
+	125,	125,	125,
+	-1,	-1,	-1
+};
+
+static int grad_apple[] = {
+	231,	239,	253,
+	181,	206,	215,
+	-1,	-1,	-1
+};
+
+static int grad_glaze[] = {
+	255,	255,	255,
+	125,	125,	125,
+	255,	255,	255
+};
+
+static int grad_blue_glaze[] = {
+	204,	232,	255,
+	108,	169,	238,
+	181,	244,	255
+};
+
+static GR_COLOR * appearance_gradients[] = { 
+	grad_plain,
+	grad_apple,
+	grad_glaze,
+	grad_blue_glaze
+};
+
+char * appearance_gradient_names[] = {
+	"Plain",
+	"Apple",
+	"Glaze",
+	"Blue Glaze"
+};
+
+
+GR_COLOR * gradient_current = grad_plain;
+static int gradient_current_idx = 0;
+
+void appearance_set_gradient_type( int index )
+{
+	if( index < 0 ) index = 0;
+	if( index > gradients_max) index = gradients_max;
+	gradient_current_idx = index;
+	gradient_current = appearance_gradients[ gradient_current_idx ];
+}
+
+int appearance_get_gradient_type( void )
+{
+    	return( gradient_current_idx );
+}
+
+int appearance_calc_gradient( int top, int i )
+{
+	if ( gradient_current[6] != -1) {
+		if ( i < 10 ) {
+			if ( gradient_current[top] > gradient_current[top+3] ) { 
+				col_diff = gradient_current[top]-gradient_current[top+3];
+				col_incr = col_diff/((HEADER_TOPLINE)/2);
+				col = gradient_current[top]-(i*col_incr);
+			} else { 
+				col_diff = gradient_current[top+3]-gradient_current[top];
+				col_incr = col_diff/((HEADER_TOPLINE)/2);
+				col = gradient_current[top]+(i*col_incr);
+			}
+		} else {
+			if ( gradient_current[top+3] > gradient_current[top+6] ) { 
+				col_diff = gradient_current[top+3]-gradient_current[top+6];
+				col_incr = col_diff/((HEADER_TOPLINE)/2);
+				col = gradient_current[top+3]-((i-10)*col_incr);
+			} else { 
+				col_diff = gradient_current[top+6]-gradient_current[top+3];
+				col_incr = col_diff/((HEADER_TOPLINE)/2);
+				col = gradient_current[top+3]+((i-10)*col_incr);
+			}
+		}
+	} else {
+		if ( gradient_current[top] > gradient_current[top+3] ) { 
+			col_diff = gradient_current[top]-gradient_current[top+3];
+			col_incr = col_diff/(HEADER_TOPLINE);
+			col = gradient_current[top]-(i*col_incr);
+		} else { 
+			col_diff = gradient_current[top+3]-gradient_current[top];
+			col_incr = col_diff/(HEADER_TOPLINE);
+			col = gradient_current[top]+(i*col_incr);
+		}
+	}
+	return( col );
+}
+
+GR_COLOR appearance_get_gradient( int i )
+{
+	return( GR_RGB(appearance_calc_gradient(0,i), appearance_calc_gradient(1,i), appearance_calc_gradient(2,i)) );
+}
 
 
 /******************************************************************************
@@ -317,6 +426,7 @@ void appearance_init( void )
 
 	if( screen_info.bpp < 16 ) {
 	   	colorscheme_max = CS_MONO_LAST;
+		decorations_max = NDEC_MONO_LAST;
 	}
 
 	if( reqscheme > colorscheme_max ) reqscheme = 0;
@@ -325,4 +435,5 @@ void appearance_init( void )
 
 	/* and now some magic twiddling to tweak the menus... */
 	menu_adjust_nschemes( colorscheme_max+1 );
+	menu_adjust_ndecorations( decorations_max );
 }

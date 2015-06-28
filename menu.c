@@ -67,14 +67,49 @@ extern void new_vortex_window(void);
 extern void new_wumpus_window(void);
 extern void about_podzilla(void);
 extern void show_credits(void);
+extern void new_text_box_np(void);
+extern void new_text_box_nppw(void);
+extern void new_run_window(void);
+extern void new_podwrite_window(void);
+extern void new_multiconvert_window(void);
+extern void new_chopper_window(void);
+extern void new_battery_window(void);
+extern void new_memoryg_window(void);
+extern void new_snake_window(void);
+extern void new_tstep_window(void);
+extern void new_conv_window(void);
+extern void new_stopwatch_window(void);
+extern void new_keyman_window(void);
+extern void manic_miner_start(void);
+extern void new_credits_window(void);
+extern void new_generator_window(void);
+/*
+extern void new_iboy4g_window(void);
+extern void new_iboyphoto_window(void);
+extern void new_iboy1mini_window(void);
+extern void new_iboy2mini_window(void);
+extern void new_iboycolor_window(void);
+extern void new_iboynano_window(void);
+*/
+extern void new_iboy_window(void);
+extern void new_idw_window(void);
+extern void new_factor_window(void);
+extern void new_metronome_window(void);
+extern void new_sudoku_window(void);
+//extern void new_idoom_window(void);
+extern void new_periodic_window(void);
+extern void new_blackjack_window(void);
+extern void new_kaboom_window(void);
+
 #ifdef MIKMOD
 extern void new_mikmod_window(void);
 #endif
+
 #ifdef MPDC
 extern void mpd_currently_playing(void);
-
 extern item_st mpdc_menu[];
 #endif /* MPDC */
+
 extern item_st lights_menu[];
 
 extern void quit_podzilla(void);
@@ -87,34 +122,56 @@ static GR_GC_ID menu_gc;
 static menu_st *menuz;
 
 static item_st tuxchess_menu[] = {
-	{N_("Last Game"), last_tuxchess_window, ACTION_MENU},
-	{N_("New Game"), new_tuxchess_window, ACTION_MENU},
+	{N_("Load Last Game"), last_tuxchess_window, ACTION_MENU},
+	{N_("---------------"), NULL, NULL},
+	{N_("Start New Game"), new_tuxchess_window, ACTION_MENU},
 	{0}
 };
 
-static item_st games_menu[] = {
-	{N_("BlueCube"), new_bluecube_window, ACTION_MENU},
-	{N_("Hunt The Wumpus"), new_wumpus_window, ACTION_MENU},
+static item_st arcade_menu[] = {
+	{N_("Asteroids"), new_steroids_window, ACTION_MENU},
 	{N_("Invaders"), new_invaders_window, ACTION_MENU},
+	{N_("KabooM!"), new_kaboom_window, ACTION_MENU},
+	{N_("Pong"), new_pong_window, ACTION_MENU},
+	{N_("Stepmania"), new_tstep_window, ACTION_MENU},
+	{N_("Tetris"), new_bluecube_window, ACTION_MENU},
+	{N_("Vortex(Demo)"), new_vortex_window, ACTION_MENU},
+	{0}
+};
+
+static item_st action_menu[] = {
+	{N_("Chopper"), new_chopper_window, ACTION_MENU},
+	{N_("Hunt The Wumpus"), new_wumpus_window, ACTION_MENU},
+	{N_("KeyMan"), new_keyman_window, ACTION_MENU},
+	{N_("Manic Miner"), manic_miner_start, ACTION_MENU},
+	{N_("Snake"), new_snake_window, ACTION_MENU},
+	{N_("Tunnel"), new_tunnel_window, ACTION_MENU},	
+	{0}
+};
+
+static item_st card_games[] = {
+	{N_("BlackJack"), new_blackjack_window, ACTION_MENU},
+	{N_("Memory"), new_memoryg_window, ACTION_MENU},
+	{0}
+};
+
+static item_st strategy_menu[] = {
 	{N_("iPobble"), new_ipobble_window, ACTION_MENU},
 	{N_("Lights"), lights_menu, SUB_MENU_HEADER},
 	{N_("Minesweeper"), new_mines_window, ACTION_MENU},
 	{N_("Othello"), new_oth_window, ACTION_MENU},
-	{N_("Pong"), new_pong_window, ACTION_MENU},
-	{N_("Steroids"), new_steroids_window, ACTION_MENU},
+	{N_("SuDoKu"), new_sudoku_window, ACTION_MENU},
 	{N_("Tic-Tac-Toe"), new_tictactoe_window, ACTION_MENU},
-	{N_("Tunnel"), new_tunnel_window, ACTION_MENU},
 	{N_("TuxChess"), tuxchess_menu, SUB_MENU_HEADER},
-	{N_("Vortex Demo"), new_vortex_window, ACTION_MENU},
+	{N_("DrugWars"), new_idw_window, ACTION_MENU},
 	{0}
 };
 
-static item_st stuff_menu[] = {
-	{N_("Cube"), new_cube_window, ACTION_MENU},
-	{N_("Dialer"), new_dialer_window, ACTION_MENU},
-	{N_("MandelPod"), new_mandel_window, ACTION_MENU},
-	{N_("Matrix"), new_matrix_window, ACTION_MENU},
-	{N_("PodDraw"), new_poddraw_window, ACTION_MENU},
+static item_st games_menu[] = {
+	{N_("Card Games"), card_games, SUB_MENU_HEADER},
+	{N_("Action Games"), action_menu, SUB_MENU_HEADER},
+	{N_("Arcade Games"), arcade_menu, SUB_MENU_HEADER},
+	{N_("Strategy Games"), strategy_menu, SUB_MENU_HEADER},
 	{0}
 };
 
@@ -156,19 +213,64 @@ static item_st world_clock_menu[] = {
 	{0}
 };
 
+static item_st tools_menu[] = {
+	{N_("Calculator"), new_calc_window, ACTION_MENU},
+	{N_("Calendar"), new_calendar_window, ACTION_MENU},
+	{N_("Clock"), world_clock_menu, SUB_MENU_HEADER},
+	{N_("PodDraw"), new_poddraw_window, ACTION_MENU},
+	{N_("PodWrite"), new_podwrite_window, ACTION_MENU},
+	{0}
+};
+
+static item_st apps_menu[] = {
+	{N_("Factor Calc"), new_factor_window, ACTION_MENU},
+	{N_("Metronome"), new_metronome_window, ACTION_MENU},
+	{N_("MultiConvert"), new_multiconvert_window, ACTION_MENU},
+	{N_("Periodic Table"), new_periodic_window, ACTION_MENU},
+	{N_("Temp Converter"), new_conv_window, ACTION_MENU},
+	{N_("Timer"), new_stopwatch_window, ACTION_MENU},
+	{N_("Tone Dialer"), new_dialer_window, ACTION_MENU},
+	{N_("Tone Generator"), new_generator_window, ACTION_MENU},
+	{0}
+};
+
+static item_st stuff_menu[] = {
+	{N_("Battery Toggle [AF]"), new_battery_window, ACTION_MENU},
+	{N_("Cube"), new_cube_window, ACTION_MENU},
+	{N_("MandelPod"), new_mandel_window, ACTION_MENU},
+	{N_("Matrix"), new_matrix_window, ACTION_MENU},
+	{N_("Text Input Password Demo"), new_text_box_nppw, ACTION_MENU},
+	{0}
+};
+
+/*
+//No Longer Needed
+static item_st iboy_menu[] = {
+	{N_("iBoy- Photo iPod"), new_iboyphoto_window, ACTION_MENU},
+	{N_("iBoy- Color iPod"), new_iboycolor_window, ACTION_MENU},
+	{N_("iBoy- 4th Gen iPod"), new_iboy4g_window, ACTION_MENU},
+	{N_("iBoy- 1st Gen Mini"), new_iboy1mini_window, ACTION_MENU},
+	{N_("iBoy- 2nd Gen Mini"), new_iboy2mini_window, ACTION_MENU},
+	{N_("iBoy- Nano iPod"), new_iboynano_window, ACTION_MENU},
+	{0}
+};
+*/
+
 static item_st extras_menu[] = {
 	{N_("Recordings"), recording_menu, SUB_MENU_HEADER},
-	{N_("Calendar"), new_calendar_window, ACTION_MENU},
-	{N_("Calculator"), new_calc_window, ACTION_MENU},
-	{N_("Clock"), world_clock_menu, SUB_MENU_HEADER},
 	{N_("Games"), games_menu, SUB_MENU_HEADER},
-	{N_("Stuff"), stuff_menu, SUB_MENU_HEADER},
+	{N_("Tools"), tools_menu, SUB_MENU_HEADER},
+	{N_("Useful Apps"), apps_menu, SUB_MENU_HEADER},
+	{N_("Fun Stuff"), stuff_menu, SUB_MENU_HEADER},
+	//{N_("DooM"), new_idoom_window, ACTION_MENU},
+	{N_("iBoy"), new_iboy_window, ACTION_MENU},
 	{0}
 };
 
 static item_st reset_menu[] = {
-	{N_("Cancel"), NULL, SUB_MENU_PREV},
-	{N_("Absolutely"), ipod_reset_settings, ACTION_MENU | SUB_MENU_PREV},
+	{N_("NO"), NULL, SUB_MENU_PREV},
+	{N_("----"), NULL, NULL},
+	{N_("YES"), ipod_reset_settings, ACTION_MENU | SUB_MENU_PREV},
 	{0}
 };
 
@@ -190,9 +292,29 @@ static item_st clocks_menu[] = {
         { 0 }
 };
 
+static item_st textinput_menu[] = {
+	{N_("OFF"), NULL, SETTING_ITEM, TEXT_INPUT, 0},
+	{N_("Serial"), NULL, SETTING_ITEM, TEXT_INPUT, 1},
+	{N_("Scroll Through"), NULL, SETTING_ITEM, TEXT_INPUT, 2},
+	{N_("On-Screen Keyboard"), NULL, SETTING_ITEM, TEXT_INPUT, 3},
+	{N_("Morse Code"), NULL, SETTING_ITEM, TEXT_INPUT, 4},
+	{N_("Cursive"), NULL, SETTING_ITEM, TEXT_INPUT, 5},
+	{N_("WheelBoard"), NULL, SETTING_ITEM, TEXT_INPUT, 6},
+	{N_("4-Button Keyboard"), NULL, SETTING_ITEM, TEXT_INPUT, 7},
+	{N_("Dial Type"), NULL, SETTING_ITEM, TEXT_INPUT, 8},
+	{N_("Telephone Keypad (4g)"), NULL, SETTING_ITEM, TEXT_INPUT, 9},
+	{N_("Thumbscript (4g)"), NULL, SETTING_ITEM, TEXT_INPUT, 10},
+	{N_("4-Button Telephone Keypad"), NULL, SETTING_ITEM, TEXT_INPUT, 11},
+	/* {N_("Dasher"), NULL, SETTING_ITEM, TEXT_INPUT, 12}, */
+	/* {N_("Speech Recognition"), NULL, SETTING_ITEM, TEXT_INPUT, 13}, */
+	{0}
+};
+
+
 static item_st appearance_menu[] = {
 	{N_("Color Scheme"), colorscheme_names, OPTION_MENU, COLORSCHEME, CS_NSCHEMES },
 	{N_("Decorations"), appearance_decorations, OPTION_MENU, DECORATIONS, NDECORATIONS },
+	{N_("Gradient Type"), appearance_gradient_names, OPTION_MENU, GRADIENTS, NGRADIENTS },
 	{N_("Battery Digits"), NULL, BOOLEAN_MENU, BATTERY_DIGITS },
 	{N_("Display Load Average"), NULL, BOOLEAN_MENU, DISPLAY_LOAD },
 	{N_("Menu Transition"), NULL, BOOLEAN_MENU, SLIDE_TRANSIT},
@@ -211,6 +333,11 @@ void menu_adjust_nschemes( int val )
 	appearance_menu[0].item_count = val;
 }
 
+void menu_adjust_ndecorations( int val )
+{
+	appearance_menu[1].item_count = val;
+}
+
 static item_st settings_menu[] = {
 	{N_("About"), about_podzilla, ACTION_MENU},
 	{N_("Credits"), show_credits, ACTION_MENU},
@@ -223,23 +350,30 @@ static item_st settings_menu[] = {
 	{N_("Backlight Timer"), backlight_options, OPTION_MENU, BACKLIGHT_TIMER, 8},
 	{N_("Clicker"), NULL, BOOLEAN_MENU, CLICKER},
 	{N_("Appearance"), appearance_menu, SUB_MENU_HEADER},
+	{N_("Text Input"), textinput_menu, SUB_MENU_HEADER},
+	{N_("Text Input Test"), new_text_box_np, ACTION_MENU},
 	{N_("Browser Path Display"), NULL, BOOLEAN_MENU, BROWSER_PATH},
 	{N_("Show Hidden Files"), NULL, BOOLEAN_MENU, BROWSER_HIDDEN},
-	{N_("Reset All Settings"), reset_menu, SUB_MENU_HEADER},
+	{N_("--------------"), NULL, NULL},
 	{N_("Save Settings"), ipod_save_settings, ACTION_MENU},
+	{N_("--------------"), NULL, NULL},
 	{N_("Load Settings"), ipod_load_settings, ACTION_MENU},
+	{N_("--------------"), NULL, NULL},
+	{N_("Reset All Settings"), reset_menu, SUB_MENU_HEADER},
 	{0}
 };
 
 static item_st reboot_menu[] = {
-	{N_("Cancel"), NULL, SUB_MENU_PREV},
-	{N_("Absolutely"), reboot_ipod, ACTION_MENU},
+	{N_("NO"), NULL, SUB_MENU_PREV},
+	{N_("----"), NULL, NULL},
+	{N_("YES"), reboot_ipod, ACTION_MENU},
 	{0}
 };
 
 static item_st turnoff_menu[] = {
-	{N_("Cancel"), NULL, SUB_MENU_PREV},
-	{N_("Absolutely"), poweroff_ipod, ACTION_MENU},
+	{N_("NO"), NULL, SUB_MENU_PREV},
+	{N_("----"), NULL, NULL},
+	{N_("YES"), poweroff_ipod, ACTION_MENU},
 	{0}
 };
 
@@ -257,12 +391,12 @@ static item_st itunes_menu[] = {
 #endif /* !MPDC */
 
 static item_st power_menu[] = {
-	{N_("Quit Podzilla"), quit_podzilla, ACTION_MENU},
-	{N_("Reboot iPod"), reboot_menu, SUB_MENU_HEADER},
+	{N_("Quit FloydZilla"), quit_podzilla, ACTION_MENU},
 #ifdef NEVER /* just to show where this should go */
 	{N_("Sleep iPod"), sleep, ACTION_MENU};
 #endif
-	{N_("Turn off iPod"), turnoff_menu, SUB_MENU_HEADER},	
+	{N_("Turn off iPod"), turnoff_menu, SUB_MENU_HEADER},
+	{N_("Reboot iPod"), reboot_menu, SUB_MENU_HEADER},
 	{0}
 };
 
@@ -278,6 +412,7 @@ static item_st main_menu[] = {
 	{N_("Now Playing"), mpd_currently_playing, ACTION_MENU},
 #endif /* MPDC */
 	{N_("File Browser"), new_browser_window, ACTION_MENU | ARROW_MENU},
+	{N_("Run..."), new_run_window, ACTION_MENU},
 	{N_("Power"), power_menu, SUB_MENU_HEADER},
 	{0}
 };
@@ -360,7 +495,7 @@ void new_menu_window()
 	GrSelectEvents(menu_wid, GR_EVENT_MASK_EXPOSURE| GR_EVENT_MASK_KEY_UP|
 			GR_EVENT_MASK_KEY_DOWN | GR_EVENT_MASK_TIMER);
 
-	menuz = menu_init(menu_wid, "podzilla", 0, 0, screen_info.cols,
+	menuz = menu_init(menu_wid, "[:Floyd2illA:]", 0, 0, screen_info.cols,
 			screen_info.rows - (HEADER_TOPLINE + 1), NULL,
 			main_menu, ASCII | TRANSLATE);
 

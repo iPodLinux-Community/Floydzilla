@@ -150,6 +150,9 @@ int ipod_set_setting(short setting, int value)
 	case DECORATIONS:
 		appearance_set_decorations(value);
 		break;
+	case GRADIENTS:
+		appearance_set_gradient_type(value);
+		break;
 	}
 	
 	return 0;
@@ -192,6 +195,7 @@ int ipod_load_settings(void)
 	ipod_set_backlight_timer(ipod_get_setting(BACKLIGHT_TIMER));
 	appearance_set_color_scheme(ipod_get_setting(COLORSCHEME));
 	appearance_set_decorations(ipod_get_setting(DECORATIONS));
+	appearance_set_gradient_type(ipod_get_setting(GRADIENTS));
 
 	return 0;
 }

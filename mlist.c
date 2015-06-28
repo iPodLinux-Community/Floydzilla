@@ -619,6 +619,12 @@ menu_st *menu_handle_item(menu_st *menulist, int num)
 		menu_retext_pixmap(menulist, num - menulist->top_item, item);
 	}
 	
+	else if(SETTING_ITEM & item->op) {
+		if(item->setting != 0)
+			ipod_set_setting(item->setting, item->item_count);
+		menulist = menu_destroy(menulist);
+	}
+
 	/* this isnt an else, so you can do (ACTION_MENU|SUB_MENU_PREV) */
 	if(SUB_MENU_PREV & item->op) {
 		menulist = menu_destroy(menulist);

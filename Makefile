@@ -165,11 +165,86 @@ OBJS=\
 	tuxchess/data.o \
 	tuxchess/eval.o \
 	tuxchess/main.o \
-	tuxchess/search.o
+	tuxchess/search.o \
+	blackjack.o \
+	sudoku.o \
+	speccy/manic_miner.o \
+	speccy/speccy.o \
+	speccy/Z80.o \
+	dopewars/init.o \
+	dopewars/functions.o \
+	dopewars/dopewars.o \
+	nxsnake/nxsnake.o \
+	memoryg.o \
+	chopper.o \
+	step/file.o \
+	step/tstep.o \
+	step/utils.o \
+	conv.o \
+	keyman.o \
+	credits.o \
+	generator.o \
+	timer.o \
+	kaboom.o \
+	clickwheel.o \
+	run.o \
+	multiconvert.o \
+	podwrite.o \
+	textinput.o \
+	textinput/cursive.o \
+	textinput/dial.o \
+	textinput/fourbtnkbd.o \
+	textinput/keypad.o \
+	textinput/morse.o \
+	textinput/osk.o \
+	textinput/ptext.o \
+	textinput/thumbscript.o \
+	textinput/wheelboard.o \
+	metronome.o \
+	factor.o \
+	periodic.o \
+	battery.o \
 
 ifneq ($(IPOD),)
 OBJS+=\
 	mp3decoder.o
+endif
+
+# additions for SQLite builds...
+ifneq ($(PTEXT_DB),)
+OBJS+=\
+	sqlite/attach.o \
+	sqlite/btree.o \
+	sqlite/build.o \
+	sqlite/callback.o \
+	sqlite/date.o \
+	sqlite/delete.o \
+	sqlite/expr.o \
+	sqlite/func.o \
+	sqlite/hash.o \
+	sqlite/insert.o \
+	sqlite/legacy.o \
+	sqlite/main.o \
+	sqlite/os_unix.o \
+	sqlite/pager.o \
+	sqlite/parse.o \
+	sqlite/prepare.o \
+	sqlite/printf.o \
+	sqlite/random.o \
+	sqlite/select.o \
+	sqlite/table.o \
+	sqlite/tokenize.o \
+	sqlite/update.o \
+	sqlite/utf.o \
+	sqlite/util.o \
+	sqlite/vacuum.o \
+	sqlite/vdbe.o \
+	sqlite/vdbeapi.o \
+	sqlite/vdbeaux.o \
+	sqlite/vdbefifo.o \
+	sqlite/vdbemem.o \
+	sqlite/where.o
+CFLAGS+= -DPTEXT_DB
 endif
 
 # additions for MikMod builds...
